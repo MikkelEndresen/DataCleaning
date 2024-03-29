@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'myapi',
+    'myapi',   # name of module such that django accesses it
 ]
 
 MIDDLEWARE = [
