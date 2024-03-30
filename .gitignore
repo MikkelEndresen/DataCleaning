@@ -1,4 +1,5 @@
 # Ignore virtual environment
 venv/
 dataCleaning/myapi/__pyache__
-dataCleaning/uploads/
+dataCleaning/uploads
+dataCleaning/myapi/api_keys.py
