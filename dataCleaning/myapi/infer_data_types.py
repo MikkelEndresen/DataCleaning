@@ -57,7 +57,7 @@ def str_col_to_dtype(dtypes, df):
     """
     for i, col in enumerate(df.columns):
         if dtypes[i][:3] == 'int':
-            df[col] = pd.to_numeric(df[col], downcast='unsigned', errors='coerce')
+            df[col] = pd.to_numeric(df[col], downcast='signed', errors='coerce')
             df[col]= df[col].convert_dtypes(convert_integer = True)
             #df[col] = df[col].astype('int32', errors='raise')
         elif dtypes[i] == 'datetime64':
@@ -67,17 +67,22 @@ def str_col_to_dtype(dtypes, df):
             except (ValueError, TypeError):
                 pass
         elif dtypes[i] == 'category':
-            print('enters')
             df[col] = pd.Categorical(df[col])
-                
+        elif dtypes[i] == 'bool':
+            df[col] = df[col].astype('bool')
+        elif dtypes[i] == 'complex':
+            df[col] = df[col].astype('complex')
+        elif dtypes[i] == 'timedelta':
+            df[col] = pd.to_timedelta(df[col])
         
-    print(df)
+   #E print(df)
     return df
 
 
 if __name__ == "__main__":
     # Test the function with your DataFrame
-    df = pd.read_csv('../uploads/sample_data.csv')
+    #df = pd.read_csv('../uploads/sample_data.csv')
+    df = pd.read_csv('../uploads/example.csv')
     #print("Data types before inference:")
     #print(df.dtypes)
 

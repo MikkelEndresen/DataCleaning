@@ -40,22 +40,24 @@ def llm_to_dtype(head):
         dtypes.
 
         The pandas dtypes you can choose from are: [object, int64, int32, int6, int8, float64, float32, 
-        bool, datetime64, timedelta[ns], category, complex]
+        bool, datetime64, timedelta, category, complex]
 
-        Please refer from using object as a dtype if possible.
-
+    
         You will take the first three rows of a pandas dataframe (data), inlcuding the headers, and determine the
-        appropriate dtype that I should use. Please only return the dtypes and NOTHING ELSE you suggest in the 
-        same order as they were read such that they correspond to the correct dataframe column. Refer to the example output.
+        appropriate dtype that I should use. 
+        Please refer from using object as a dtype if possible.
+        timedelta: Timedeltas are differences in times, expressed in difference units, e.g. days, hours, minutes, seconds. They can be both positive and negative.
+        Please only return the dtypes and NOTHING ELSE 
+        Return what you suggest in the same order as they were read such that they correspond to the correct dataframe column. Refer to the example output.
 
         Data: [{head}]
 
-        Example input:[ Data: [      Name  Birthdate Score Grade
-                                0    Alice  1/01/1990    90     A
-                                1      Bob  2/02/1991    75     B
-                                2  Charlie  3/03/1992    85     A]]
+        Example input:[ Data: [      Name  Birthdate Score Grade TimeAlive
+                                0    Alice  1/01/1990    90     A    45 days
+                                1      Bob  2/02/1991    75     B    30 days
+                                2  Charlie  3/03/1992    85     A    11 hours]]
         
-        Example Output: [object, datetime64, int32, category]
+        Example Output: [object, datetime64, int32, category, timedelta]
     """
 
     print(queryDataTypeTemplate)
