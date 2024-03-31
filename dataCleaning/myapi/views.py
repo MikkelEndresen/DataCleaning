@@ -24,8 +24,20 @@ def upload_document(request):
             df = datafile_to_df(file_path)
         except ValueError as e:
             return Response({'error': f'{e}'})
+        
 
-        print(df)
-        return Response({'success': True})
+        # Save df to .csv, keep dtypes
+        dtypes = df.dtypes.astype(str).tolist()
+        dtypes = (d+" " for d in dtypes)
+        csv = df.to_csv(index=False)
+        print(dtypes)
+        response = {
+            'data': csv,
+            'dtypes': dtypes,
+        }
+
+        #response = Response(csv, content_type='text/csv')
+        return Response(response)
+        #return Response({'success': True})
     else:
         return Response({'error': 'No file uploaded'}, status=400)

@@ -21,11 +21,9 @@ def infer_and_convert_data_types(df):
         print(f'dtypes are: {dtypes}')
 
         # Test
-        print(df.dtypes)
         df = str_col_to_dtype(dtypes, df)
-        print(df.dtypes)
 
-        return None
+        return df
 
     for col in df.columns:
         print(df[col])
@@ -74,15 +72,14 @@ def str_col_to_dtype(dtypes, df):
             df[col] = df[col].astype('complex')
         elif dtypes[i] == 'timedelta':
             df[col] = pd.to_timedelta(df[col])
-        
-   #E print(df)
+    
     return df
 
 
 if __name__ == "__main__":
     # Test the function with your DataFrame
     #df = pd.read_csv('../uploads/sample_data.csv')
-    df = pd.read_csv('../uploads/example.csv')
+    df = pd.read_csv('../uploads/example2.csv')
     #print("Data types before inference:")
     #print(df.dtypes)
 

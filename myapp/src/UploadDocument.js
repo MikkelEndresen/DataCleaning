@@ -6,6 +6,7 @@ const FileUploadComponent = () => {
     console.log("Rendering FileUploadComponent");
   
     const [file, setFile] = useState(null);
+    const [csvData, setCsvData] = useState(null); //
   
     const handleFileChange = (e) => {
       console.log("File change event:", e.target.files);
@@ -26,6 +27,7 @@ const FileUploadComponent = () => {
             body: formData,
           });
           const data = await result.json();
+          setCsvData(data); //
           console.log("Upload response:", data);
         } catch (error) {
           console.error("Upload error:", error);
@@ -55,6 +57,15 @@ const FileUploadComponent = () => {
         )}
   
         {file && <button onClick={handleUpload}>Upload a file</button>}
+
+        {csvData && ( 
+        <div>
+          <h2>CSV Data:</h2>
+          <pre>{csvData.dtypes}</pre>
+          <pre>{csvData.data}</pre> {/* Display CSV data as plain text */}
+        </div>
+      )}
+
       </>
     );
   };

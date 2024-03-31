@@ -5,8 +5,7 @@ import FileUploadComponent from './UploadDocument';
 function App() {
   return (
     <div>
-      <h1>"Welcome"</h1>
-      <HelloWorld />
+      <h1>"Welcome to Rhombus AI interview application"</h1>
       <br/>
       <FileUploadComponent />
     </div>
