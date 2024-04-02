@@ -9,12 +9,18 @@ const FileUploadComponent = () => {
     const [csvData, setCsvData] = useState(null); 
     const [dropdownValues, setDropdownValues] = useState([]);
     const [showDropdowns, setShowDropdowns] = useState(false);
+    const [updatedCsv, setShowUpdatedCsv] = useState(false);
 
     const yourDropdownOptions = [
         "Select Option",
-        "Int",
-        "Float",
-        "Category",
+        "int",
+        "float",
+        "category",
+        "datetime64",
+        "bool",
+        "complex",
+        "timedelta",
+        "object",
     ]
 
     const handleFileChange = (e) => {
@@ -55,9 +61,14 @@ const FileUploadComponent = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(dropdownValues),
+                body: JSON.stringify({
+                    'dtypes': dropdownValues,  // No need to stringify here
+                    'file_path': csvData.file_path,  // No need to stringify here
+                })
             });
         const data = await Response.json();
+        setCsvData(data);
+        setShowUpdatedCsv(true);
         console.log("Response from backend:", data);
         } catch (error) {
             console.error("Error submitting dropdown values:", error);
@@ -112,6 +123,17 @@ const FileUploadComponent = () => {
                 ))}
             </select>
         ))}
+
+        <div> 
+            {updatedCsv && (
+                <div>
+                <h2>CSV Data:</h2>
+                <pre>{csvData.dtypes}</pre>
+                <pre>{csvData.data}</pre>
+              </div>
+            )}
+
+        </div>
         </div>
       </>
     );

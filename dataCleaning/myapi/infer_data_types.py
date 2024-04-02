@@ -1,5 +1,5 @@
 import pandas as pd
-from llm_api_client import llm_to_dtype
+from .llm_api_client import llm_to_dtype
 
 def infer_and_convert_data_types(df):
     """
@@ -11,18 +11,15 @@ def infer_and_convert_data_types(df):
     Returns: 
         - df
     """
-
+    print(df.columns[0])
     # Check for header
     if isinstance(df.columns[0], str):
-        print(df.head(3))
-        # if header give it to gemini and convert columns to appropriate datatypes
+        # if header give it to gemini with three first rows
+        # and then onvert columns to suggested datatypes
         dtypes = llm_to_dtype(df.head(3))
-
         print(f'dtypes are: {dtypes}')
-
-        # Test
         df = str_col_to_dtype(dtypes, df)
-
+    
         return df
 
     for col in df.columns:
@@ -53,6 +50,7 @@ def str_col_to_dtype(dtypes, df):
     Return:
         - Column with correct dtype
     """
+    # TODO: add float...
     for i, col in enumerate(df.columns):
         if dtypes[i][:3] == 'int':
             df[col] = pd.to_numeric(df[col], downcast='signed', errors='coerce')

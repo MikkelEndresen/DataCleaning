@@ -2,7 +2,7 @@ import os
 import google.generativeai as genai
 from IPython.display import Markdown
 import textwrap
-from api_keys import GOOGLE_API_KEY
+from .api_keys import GOOGLE_API_KEY
 
 # run: 'gcloud auth application-default login', to login
 # You are in the llm-rag project

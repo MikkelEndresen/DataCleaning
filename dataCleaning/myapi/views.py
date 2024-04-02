@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 from .forms import UploadFileForm
 from .utils import datafile_to_df
-
+from .infer_data_types import str_col_to_dtype, infer_and_convert_data_types
 
 @api_view(['GET'])
 def hello_world(request):
@@ -25,6 +25,7 @@ def upload_document(request):
         except ValueError as e:
             return Response({'error': f'{e}'})
         
+        df = infer_and_convert_data_types(df)
 
         # Save df to .csv, keep dtypes
         dtypes = df.dtypes.astype(str).tolist() # TODO: Fix this!
@@ -34,6 +35,7 @@ def upload_document(request):
         response = {
             'data': csv,
             'dtypes': dtypes,
+            'file_path': file_path,
         }
 
         #response = Response(csv, content_type='text/csv')
@@ -44,6 +46,22 @@ def upload_document(request):
     
 @api_view(['POST'])
 def select_dtype(request):
-    selected_dtypes = request.data
-    print(selected_dtypes)
-    return Response({'message': 'This seems to work well'})
+    selected_dtypes = request.data.get('dtypes')
+    file_path = request.data.get('file_path')
+    try:
+        df = datafile_to_df(file_path)
+    except ValueError as e:
+        return Response({'error': f'{e}'})
+
+    df = str_col_to_dtype(selected_dtypes, df)
+
+    # Save df to .csv, keep dtypes
+    dtypes = df.dtypes.astype(str).tolist() # TODO: Fix this!
+    print(dtypes)
+    dtypes = (d+" " for d in dtypes)
+    csv = df.to_csv(index=False)
+    response = {
+            'data': csv,
+            'dtypes': dtypes,
+    }
+    return Response(response)
