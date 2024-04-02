@@ -1,7 +1,5 @@
 import React from 'react';
-import HelloWorld from './HelloWorld';
 import FileUploadComponent from './UploadDocument';
-import SelectDtypeComponent from './SelectDtype';
 
 function App() {
   return (

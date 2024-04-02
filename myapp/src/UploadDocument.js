@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-//import axios from 'axios';
-
+import { mapUserToData, mapDataToUser } from './dataTypeMappings';
 
 const FileUploadComponent = () => {
     console.log("Rendering FileUploadComponent");
@@ -9,18 +8,17 @@ const FileUploadComponent = () => {
     const [csvData, setCsvData] = useState(null); 
     const [dropdownValues, setDropdownValues] = useState([]);
     const [showDropdowns, setShowDropdowns] = useState(false);
-    const [updatedCsv, setShowUpdatedCsv] = useState(false);
 
     const yourDropdownOptions = [
-        "Select Option",
-        "int",
-        "float",
-        "category",
-        "datetime64",
-        "bool",
-        "complex",
-        "timedelta",
-        "object",
+        'Select Option',
+        'Integer',
+        'Decimal',
+        'Category',
+        'Date',
+        'True/False',
+        'Complex numbers',
+        'Time Period',
+        'Text',
     ]
 
     const handleFileChange = (e) => {
@@ -62,13 +60,12 @@ const FileUploadComponent = () => {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    'dtypes': dropdownValues,  // No need to stringify here
+                    'dtypes': dropdownValues.map(dataType => mapUserToData(dataType)),  // No need to stringify here
                     'file_path': csvData.file_path,  // No need to stringify here
                 })
             });
-        const data = await Response.json();
+        const data = await result.json();
         setCsvData(data);
-        setShowUpdatedCsv(true);
         console.log("Response from backend:", data);
         } catch (error) {
             console.error("Error submitting dropdown values:", error);
@@ -114,26 +111,20 @@ const FileUploadComponent = () => {
         {showDropdowns && <h2>Change Dtypes</h2>}
         {showDropdowns && <button onClick={handleDtype}>Submit Dtype</button>}
 
-        {showDropdowns && Array.from(Array(csvData.dtypes.length).keys()).map((index) => (
-            <select key={index} value={dropdownValues[index] || ''} onChange={(event) => handleDropdownChange(index, event)}>
-                {yourDropdownOptions.map((option, optionIndex) => (
-                    <option key={optionIndex} value={option}>
-                        {option}
-                    </option>
-                ))}
+        {showDropdowns && csvData.dtypes.map((dataType, index) => {
+        const mappedDataType = mapDataToUser(dataType);
+        const defaultValue = dropdownValues[index] || mappedDataType;
+        console.log(`Dropdown ${index} default value: ${defaultValue}, mapped: ${mappedDataType}`);
+        return (
+            <select key={index} defaultValue={defaultValue} onChange={(event) => handleDropdownChange(index, event)}>
+            {yourDropdownOptions.map((option, optionIndex) => (
+                <option key={optionIndex} value={option}>
+                {option}
+                </option>
+            ))}
             </select>
-        ))}
-
-        <div> 
-            {updatedCsv && (
-                <div>
-                <h2>CSV Data:</h2>
-                <pre>{csvData.dtypes}</pre>
-                <pre>{csvData.data}</pre>
-              </div>
-            )}
-
-        </div>
+        );
+        })}
         </div>
       </>
     );

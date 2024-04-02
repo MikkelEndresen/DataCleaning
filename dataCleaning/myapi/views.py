@@ -53,15 +53,17 @@ def select_dtype(request):
     except ValueError as e:
         return Response({'error': f'{e}'})
 
+    print(selected_dtypes)
     df = str_col_to_dtype(selected_dtypes, df)
 
     # Save df to .csv, keep dtypes
-    dtypes = df.dtypes.astype(str).tolist() # TODO: Fix this!
+    dtypes = df.dtypes.astype(str).tolist()
     print(dtypes)
     dtypes = (d+" " for d in dtypes)
     csv = df.to_csv(index=False)
     response = {
             'data': csv,
             'dtypes': dtypes,
+            'file_path': file_path,
     }
     return Response(response)
