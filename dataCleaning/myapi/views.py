@@ -27,10 +27,10 @@ def upload_document(request):
         
 
         # Save df to .csv, keep dtypes
-        dtypes = df.dtypes.astype(str).tolist()
+        dtypes = df.dtypes.astype(str).tolist() # TODO: Fix this!
         dtypes = (d+" " for d in dtypes)
         csv = df.to_csv(index=False)
-        print(dtypes)
+
         response = {
             'data': csv,
             'dtypes': dtypes,
@@ -41,3 +41,9 @@ def upload_document(request):
         #return Response({'success': True})
     else:
         return Response({'error': 'No file uploaded'}, status=400)
+    
+@api_view(['POST'])
+def select_dtype(request):
+    selected_dtypes = request.data
+    print(selected_dtypes)
+    return Response({'message': 'This seems to work well'})

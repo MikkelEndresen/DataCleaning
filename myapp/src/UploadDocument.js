@@ -6,8 +6,17 @@ const FileUploadComponent = () => {
     console.log("Rendering FileUploadComponent");
   
     const [file, setFile] = useState(null);
-    const [csvData, setCsvData] = useState(null); //
-  
+    const [csvData, setCsvData] = useState(null); 
+    const [dropdownValues, setDropdownValues] = useState([]);
+    const [showDropdowns, setShowDropdowns] = useState(false);
+
+    const yourDropdownOptions = [
+        "Select Option",
+        "Int",
+        "Float",
+        "Category",
+    ]
+
     const handleFileChange = (e) => {
       console.log("File change event:", e.target.files);
       if (e.target.files) {
@@ -28,6 +37,7 @@ const FileUploadComponent = () => {
           });
           const data = await result.json();
           setCsvData(data); //
+          setShowDropdowns(true);
           console.log("Upload response:", data);
         } catch (error) {
           console.error("Upload error:", error);
@@ -36,7 +46,31 @@ const FileUploadComponent = () => {
         console.log("No file selected for upload");
       }
     };
-  
+
+    const handleDtype = async () => {
+        console.log("Changing dtypes");
+        try {
+            const result = await fetch("http://localhost:8000/api/select-dtype/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(dropdownValues),
+            });
+        const data = await Response.json();
+        console.log("Response from backend:", data);
+        } catch (error) {
+            console.error("Error submitting dropdown values:", error);
+        }
+    };
+
+
+    const handleDropdownChange = (index, event) => {
+        const updatedDropdownValues = [...dropdownValues];
+        updatedDropdownValues[index] = event.target.value;
+        setDropdownValues(updatedDropdownValues);
+    };
+
     return (
       <>
         <div>
@@ -62,12 +96,25 @@ const FileUploadComponent = () => {
         <div>
           <h2>CSV Data:</h2>
           <pre>{csvData.dtypes}</pre>
-          <pre>{csvData.data}</pre> {/* Display CSV data as plain text */}
+          <pre>{csvData.data}</pre>
         </div>
       )}
+      <div>
+        {showDropdowns && <h2>Change Dtypes</h2>}
+        {showDropdowns && <button onClick={handleDtype}>Submit Dtype</button>}
 
+        {showDropdowns && Array.from(Array(csvData.dtypes.length).keys()).map((index) => (
+            <select key={index} value={dropdownValues[index] || ''} onChange={(event) => handleDropdownChange(index, event)}>
+                {yourDropdownOptions.map((option, optionIndex) => (
+                    <option key={optionIndex} value={option}>
+                        {option}
+                    </option>
+                ))}
+            </select>
+        ))}
+        </div>
       </>
     );
   };
-  
+
 export default FileUploadComponent;
