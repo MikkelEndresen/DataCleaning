@@ -16,6 +16,7 @@ def infer_and_convert_data_types(df):
     if isinstance(df.columns[0], str):
         # if header give it to gemini with three first rows
         # and then onvert columns to suggested datatypes
+        
         dtypes = llm_to_dtype(df.head(3))
         print(f'dtypes are: {dtypes}')
         df = str_col_to_dtype(dtypes, df)
@@ -50,8 +51,10 @@ def str_col_to_dtype(dtypes, df):
     Return:
         - Column with correct dtype
     """
-    # TODO: add float...
+    # TODO: add float and object
     for i, col in enumerate(df.columns):
+        if i > len(dtypes) -1:
+            break
         if dtypes[i][:3] == 'int':
             df[col] = pd.to_numeric(df[col], downcast='signed', errors='coerce')
             df[col]= df[col].convert_dtypes(convert_integer = True)
@@ -67,7 +70,11 @@ def str_col_to_dtype(dtypes, df):
         elif dtypes[i] == 'bool':
             df[col] = df[col].astype('bool')
         elif dtypes[i] == 'complex':
-            df[col] = df[col].astype('complex')
+            try:
+                df[col] = df[col].astype('complex')
+                continue
+            except (ValueError, TypeError):
+                pass
         elif dtypes[i] == 'timedelta':
             df[col] = pd.to_timedelta(df[col])
     

@@ -1,13 +1,13 @@
 
 // Pandas to user-friendly datatypes
 const dataTypeMappings = {
-    'Integer': ['int64', 'int32', 'int16', 'int8'],
+    'Integer': ['Int64', 'Int32', 'Int16', 'Int8'],
     'Decimal': ['float64', 'float32'],
     'Text': ['object'],
     'True/False': ['bool'],
     'Date': ['datetime64', 'datetime64[ns]'],
     'Time Period': ['timedelta'],
-    'Complex numbers': ['complex'],
+    'Complex numbers': ['complex128'],
     'Category': ['category'],
 };
 
@@ -18,16 +18,12 @@ export const mapUserToData = (dataType) => {
 };
 
 // Mapping pandas to user-friendly
-export const mapDataToUser = (dataType) => {
+export const mapDataToUser = (input) => {
     for (const key in dataTypeMappings) {
-        console.log(key)
-        console.log(dataType)
-        if (Object.prototype.hasOwnProperty.call(dataTypeMappings, key)) {
-            if (dataTypeMappings[key].includes(dataType)) {
-                return key;
-            }
+        if (dataTypeMappings[key].includes(input)) {
+            return key;
         }
     }
-    return dataType; // Return the original data type if no mapping is found
+    return "Unknown"; // Return "Unknown" if input value is not found in any mapping
 };
 
