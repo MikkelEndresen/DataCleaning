@@ -113,7 +113,7 @@ const FileUploadComponent = () => {
 
         {showDropdowns && csvData.dtypes.map((dataType, index) => {
         const mappedDataType = mapDataToUser(dataType);
-        const defaultValue = mappedDataType; //= dropdownValues[index] || mappedDataType;
+        const defaultValue = mappedDataType; // || dropdownValues[index];
         console.log(`Initial dataType: ${dataType}, mappedDataType: ${mappedDataType}`);
         return (
             <select key={index} value={defaultValue} onChange={(event) => handleDropdownChange(index, event)}>

@@ -19,6 +19,7 @@ export const mapUserToData = (dataType) => {
 
 // Mapping pandas to user-friendly
 export const mapDataToUser = (input) => {
+    input = input.trim();
     for (const key in dataTypeMappings) {
         if (dataTypeMappings[key].includes(input)) {
             return key;
