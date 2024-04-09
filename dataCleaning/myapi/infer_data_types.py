@@ -14,8 +14,8 @@ def infer_and_convert_data_types(df):
     print(df.columns[0])
     # Check for header
     if isinstance(df.columns[0], str):
-        # if header give it to gemini with three first rows
-        # and then onvert columns to suggested datatypes
+        # if header then give it to gemini with three first rows
+        # and then convert columns to suggested datatypes
         
         dtypes = llm_to_dtype(df.head(3))
         print(f'dtypes are: {dtypes}')
@@ -58,64 +58,25 @@ def convert_to_dtype(dtypes, df):
         - Dataframe with updated dtypes
     """
 
+
+    conversion_functions = {
+        'int': lambda col: convert_to_int(col, downcast='signed'),
+        'float': lambda col: convert_to_float(col, downcast='float'),
+        'datetime64': convert_to_datetime, 
+        'category': convert_to_category,
+        'bool': convert_to_bool,
+        'complex': convert_to_complex,
+        'timedelta': convert_to_timedelta,
+        'object': convert_to_object
+    }
+
     for i, col in enumerate(df.columns):
-
-        conversion_functions = {
-            'int': lambda col: convert_to_int(col, downcast='signed'),
-            'float': lambda col: convert_to_float(col, downcast='float'),
-            'datetime64': convert_to_datetime, 
-            'category': convert_to_category,
-            'bool': convert_to_bool,
-            'complex': convert_to_complex,
-            'timedelta': convert_to_timedelta,
-            'object': convert_to_object
-        }
-
-        for i, col in enumerate(df.columns):
-            for dtype, conversion_func in conversion_functions.items():
-                if dtypes[i].startswith(dtype):
-                    df[col] = conversion_func(df[col])
-                    break
-
-
-
-        # if i > len(dtypes) -1: # for when LLM does not return enough dtypes. 
-        #     break
-        # if dtypes[i][:3] == 'int':
-        #     #df[col] = df[col].astype('int64')
-
-        #     df[col] = pd.to_numeric(df[col], downcast='signed', errors='coerce')
-        #     df[col]= df[col].convert_dtypes(convert_integer = True)
-
-        # elif dtypes[i][:5] == 'float':
-        #     df[col] = df[col].astype(float)
-
-        # elif dtypes[i] == 'datetime64':
-        #     try:
-        #         df[col] = pd.to_datetime(df[col])
-        #         continue
-        #     except (ValueError, TypeError):
-        #         print(f"Warning: Failed to convert values in column '{col}' to datetime.")
-
-        # elif dtypes[i] == 'category':
-        #     df[col] = pd.Categorical(df[col])
-
-        # elif dtypes[i] == 'bool':
-        #     df[col] = df[col].astype('bool')
-
-        # elif dtypes[i] == 'complex':
-        #     try:
-        #         df[col] = df[col].astype('complex')
-        #         continue
-        #     except (ValueError, TypeError):
-        #         print(f"Warning: Failed to convert values in column '{col}' to complex.")
-
-        # elif dtypes[i] == 'timedelta':
-        #     df[col] = pd.to_timedelta(df[col])
-
-        # elif dtypes[i] == 'object':
-        #     print("works")
-        #     df[col] = df[col].astype(object)
+        for dtype, conversion_func in conversion_functions.items():
+            if i >= len(dtypes):
+                break
+            if dtypes[i].startswith(dtype):
+                df[col] = conversion_func(df[col])
+                break
     
     return df
 
