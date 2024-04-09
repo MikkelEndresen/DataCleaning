@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 from .forms import UploadFileForm
 from .utils import datafile_to_df
-from .infer_data_types import str_col_to_dtype, infer_and_convert_data_types
+from .infer_data_types import convert_to_dtype, infer_and_convert_data_types
 
 @api_view(['GET'])
 def hello_world(request):
@@ -54,7 +54,7 @@ def select_dtype(request):
         return Response({'error': f'{e}'})
 
     print(selected_dtypes)
-    df = str_col_to_dtype(selected_dtypes, df)
+    df = convert_to_dtype(selected_dtypes, df)
 
     # Save df to .csv, keep dtypes
     dtypes = df.dtypes.astype(str).tolist()

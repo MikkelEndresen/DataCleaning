@@ -74,7 +74,7 @@ def convert_to_dtype(dtypes, df):
         for i, col in enumerate(df.columns):
             for dtype, conversion_func in conversion_functions.items():
                 if dtypes[i].startswith(dtype):
-                    conversion_func(df[col])
+                    df[col] = conversion_func(df[col])
                     break
 
 
@@ -128,6 +128,7 @@ def convert_to_int(col, downcast=None):
         col = pd.to_numeric(col, downcast=downcast, errors="coerce")
     except (ValueError, TypeError) as e:
         print(f"Error converting column {col[0]} to integer: {e}")
+    return col
 
 def convert_to_float(col, downcast=None):
     """
@@ -137,6 +138,7 @@ def convert_to_float(col, downcast=None):
         col = pd.to_numeric(col, downcast=downcast)
     except (ValueError, TypeError) as e:
         print(f"Error converting column {col[0]} to float: {e}")
+    return col
 
 def convert_to_category(col):
     """
@@ -146,6 +148,7 @@ def convert_to_category(col):
         col = pd.Categorical(col)
     except (ValueError, TypeError) as e:
         print(f"Error converting column {col[0]} to categorical: {e}")
+    return col
     
 def convert_to_bool(col):
     """
@@ -155,12 +158,14 @@ def convert_to_bool(col):
         col = col.astype('bool')
     except (ValueError, TypeError) as e:
         print(f"Error converting column {col[0]} to bool: {e}")
+    return col
     
 def convert_to_complex(col):
     try:
         col = col.astype('complex')
     except (ValueError, TypeError) as e:
         print(f"Error converting column {col[0]} to complex numnbers: {e}")
+    return col
 
 def convert_to_timedelta(col):
     """
@@ -170,6 +175,7 @@ def convert_to_timedelta(col):
         col = pd.to_timedelta(col)
     except (ValueError, TypeError) as e:
         print(f"Error converting column {col[0]} to timedelta: {e}")
+    return col
 
 def convert_to_object(col):
     """
@@ -179,6 +185,7 @@ def convert_to_object(col):
         col = col.astype(object)
     except (ValueError, TypeError) as e:
         print(f"Error converting column {col[0]} to object: {e}")
+    return col
 
 def convert_to_datetime(col):
     """
@@ -188,6 +195,7 @@ def convert_to_datetime(col):
         col = pd.to_datetime(col)
     except (ValueError, TypeError) as e:
         print(f"Error converting column {col[0]} to datetime: {e}")
+    return col
 
 
 if __name__ == "__main__":
