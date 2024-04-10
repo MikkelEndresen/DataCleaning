@@ -28,22 +28,29 @@ def infer_and_convert_data_types(df):
     for col in df.columns:
 
         # Attempt to convert to numeric first
-        df_converted = pd.to_numeric(df[col], errors='coerce')
-        if not df_converted.isna().all():  # If at least one value is numeric
-            df[col] = df_converted
-            continue
+        if "," in str(col[0]):
+            col = convert_to_float(col, downcast='float')
+        else:
+            col = convert_to_int(col, downcast='signed')
 
         # Attempt to convert to datetime
-        try:
-            df[col] = pd.to_datetime(df[col])
-            continue
-        except (ValueError, TypeError):
-            pass
+        col = convert_to_datetime(col)
+
+        # bool
+        col = convert_to_bool(col)
 
         # Check if the column should be categorical
         if len(df[col].unique()) / len(df[col]) < 0.5:  # Example threshold for categorization
             df[col] = pd.Categorical(df[col])
 
+        # convert_to_complex 
+        col = convert_to_complex(col)
+
+        # timedelta
+        col = convert_to_timedelta(col)
+
+        # object
+        col = convert_to_object(col)
         
 
     return df
