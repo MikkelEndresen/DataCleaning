@@ -11,67 +11,132 @@ def infer_and_convert_data_types(df):
     Returns: 
         - df
     """
-    print(df.columns[0])
-    # Check for header
-    if isinstance(df.columns[0], str):
-        # if header give it to gemini with three first rows
-        # and then onvert columns to suggested datatypes
-        dtypes = llm_to_dtype(df.head(3))
-        print(f'dtypes are: {dtypes}')
-        df = str_col_to_dtype(dtypes, df)
+
+    conversion_functions = {
+        'int': lambda col: convert_to_int(col, downcast='signed'),
+        'float': lambda col: convert_to_float(col, downcast='float'),
+        'datetime64': convert_to_datetime, 
+        'category': convert_to_category,
+        'bool': convert_to_bool,
+        'complex': convert_to_complex,
+        'timedelta': convert_to_timedelta,
+        'object': convert_to_object
+    }
     
-        return df
+    print(df.columns[0])
+   
+    # Letting an LLM decide dtypes
+    dtypes = llm_to_dtype(df.head(3))
+    print(f'dtypes are: {dtypes}')
 
-    for col in df.columns:
-        print(df[col])
-
-        # Attempt to convert to numeric first
-        df_converted = pd.to_numeric(df[col], errors='coerce')
-        if not df_converted.isna().all():  # If at least one value is numeric
-            df[col] = df_converted
-            continue
-
-        # Attempt to convert to datetime
-        try:
-            df[col] = pd.to_datetime(df[col])
-            continue
-        except (ValueError, TypeError):
-            pass
-
-        # Check if the column should be categorical
-        if len(df[col].unique()) / len(df[col]) < 0.5:  # Example threshold for categorization
-            df[col] = pd.Categorical(df[col])
-
+    df = convert_to_dtype(dtypes, df, conversion_functions)
+    
     return df
 
-def str_col_to_dtype(dtypes, df):
+def convert_to_dtype(dtypes, df, conversion_functions):
     """
+    Input:
+        - List of dtypes specified
+        - Dataframe
     
     Return:
-        - Column with correct dtype
+        - Dataframe with updated dtypes
     """
-    # TODO: add float...
+
     for i, col in enumerate(df.columns):
-        if dtypes[i][:3] == 'int':
-            df[col] = pd.to_numeric(df[col], downcast='signed', errors='coerce')
-            df[col]= df[col].convert_dtypes(convert_integer = True)
-            #df[col] = df[col].astype('int32', errors='raise')
-        elif dtypes[i] == 'datetime64':
-            try:
-                df[col] = pd.to_datetime(df[col])
-                continue
-            except (ValueError, TypeError):
-                pass
-        elif dtypes[i] == 'category':
-            df[col] = pd.Categorical(df[col])
-        elif dtypes[i] == 'bool':
-            df[col] = df[col].astype('bool')
-        elif dtypes[i] == 'complex':
-            df[col] = df[col].astype('complex')
-        elif dtypes[i] == 'timedelta':
-            df[col] = pd.to_timedelta(df[col])
-    
+        for dtype, conversion_func in conversion_functions.items():
+            if i >= len(dtypes):
+                break
+            if dtypes[i].startswith(dtype):
+                df[col] = conversion_func(df[col])
+
     return df
+
+
+def convert_to_int(col, downcast=None):
+    """
+    Converting column to integers
+    """
+    try:
+        col = pd.to_numeric(col, downcast=downcast, errors="coerce")
+    except (ValueError, TypeError, AttributeError) as e:
+        print(f"Error converting column {col[0]} to integer: {e}")
+        return None
+    return col
+
+def convert_to_float(col, downcast=None):
+    """
+    Converting column to floats
+    """
+    try:
+        col = pd.to_numeric(col, downcast=downcast)
+    except (ValueError, TypeError, AttributeError) as e:
+        print(f"Error converting column {col[0]} to float: {e}")
+        return None
+    return col
+
+def convert_to_category(col):
+    """
+    Converting column to category
+    """
+    try:
+        col = pd.Categorical(col)
+    except (ValueError, TypeError, AttributeError) as e:
+        print(f"Error converting column {col[0]} to categorical: {e}")
+        return None
+    return col
+    
+def convert_to_bool(col):
+    """
+    Converting column to booleans
+    """
+    try:
+        col = col.astype('bool')
+    except (ValueError, TypeError, AttributeError) as e:
+        print(f"Error converting column {col[0]} to bool: {e}")
+        return None
+    return col
+    
+def convert_to_complex(col):
+    try:
+        col = col.astype('complex')
+    except (ValueError, TypeError, AttributeError) as e:
+        print(f"Error converting column {col[0]} to complex numnbers: {e}")
+        return None
+    return col
+
+def convert_to_timedelta(col):
+    """
+    Converting column to timedelta
+    """
+    try:
+        col = pd.to_timedelta(col)
+    except (ValueError, TypeError, AttributeError) as e:
+        print(f"Error converting column {col[0]} to timedelta: {e}")
+        return None
+    return col
+
+def convert_to_object(col):
+    """
+    Converting column to object
+    """
+    try:
+        col = col.astype(object)
+    except (ValueError, TypeError, AttributeError) as e:
+        print(f"Error converting column {col[0]} to object: {e}")
+        return None
+    return col
+
+def convert_to_datetime(col):
+    """
+    Converting column to dateetime
+    """
+    try:
+        col = pd.to_datetime(col)
+    except (ValueError, TypeError, AttributeError) as e:
+        print(f"Error converting column {col[0]} to datetime: {e}")
+        return None
+    return col
 
 
 if __name__ == "__main__":
