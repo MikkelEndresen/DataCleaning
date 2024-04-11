@@ -4,9 +4,6 @@ from IPython.display import Markdown
 import textwrap
 from .api_keys import GOOGLE_API_KEY
 
-# run: 'gcloud auth application-default login', to login
-# You are in the llm-rag project
-# Service id: figure12-34@llm-rag-415122.iam.gserviceaccount.com
 
 class dataTypeLLM:
     
