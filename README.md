@@ -1,6 +1,9 @@
 # DataCleaning
 
-A web application that processes and displays data, focusing on data type inference and conversion for datasets using Python and Pandas.
+A web application that processes and displays data. 
+Input a .csv file and it returns the data with the correct dtypes. 
+You can also manually select other dtypes if needed.
+Uses React.js for the frontend. 
 
 ## Prerequisites
 
