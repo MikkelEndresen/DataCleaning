@@ -1,6 +1,7 @@
 import pandas as pd
 from .llm_api_client import llm_to_dtype
 
+
 def infer_and_convert_data_types(df):
     """
     Covert df to appropriate data types
@@ -12,16 +13,7 @@ def infer_and_convert_data_types(df):
         - df
     """
 
-    conversion_functions = {
-        'int': lambda col: convert_to_int(col, downcast='signed'),
-        'float': lambda col: convert_to_float(col, downcast='float'),
-        'datetime64': convert_to_datetime, 
-        'category': convert_to_category,
-        'bool': convert_to_bool,
-        'complex': convert_to_complex,
-        'timedelta': convert_to_timedelta,
-        'object': convert_to_object
-    }
+    #conversion_functions = 
     
     print(df.columns[0])
    
@@ -29,11 +21,11 @@ def infer_and_convert_data_types(df):
     dtypes = llm_to_dtype(df.head(3))
     print(f'dtypes are: {dtypes}')
 
-    df = convert_to_dtype(dtypes, df, conversion_functions)
+    df = convert_to_dtype(dtypes, df) #, conversion_functions)
     
     return df
 
-def convert_to_dtype(dtypes, df, conversion_functions):
+def convert_to_dtype(dtypes, df): #, conversion_functions):
     """
     Input:
         - List of dtypes specified
@@ -44,8 +36,8 @@ def convert_to_dtype(dtypes, df, conversion_functions):
     """
 
     for i, col in enumerate(df.columns):
-        for dtype, conversion_func in conversion_functions.items():
-            if i >= len(dtypes):
+        for dtype, conversion_func in CONVERSION_FUNCTIONS.items():
+            if i >= len(dtypes) or dtypes[i] is None:
                 break
             if dtypes[i].startswith(dtype):
                 df[col] = conversion_func(df[col])
@@ -137,6 +129,17 @@ def convert_to_datetime(col):
         print(f"Error converting column {col[0]} to datetime: {e}")
         return None
     return col
+
+CONVERSION_FUNCTIONS = {
+        'int': lambda col: convert_to_int(col, downcast='signed'),
+        'float': lambda col: convert_to_float(col, downcast='float'),
+        'datetime64': convert_to_datetime, 
+        'category': convert_to_category,
+        'bool': convert_to_bool,
+        'complex': convert_to_complex,
+        'timedelta': convert_to_timedelta,
+        'object': convert_to_object
+    }
 
 
 if __name__ == "__main__":
