@@ -114,7 +114,7 @@ const FileUploadComponent = () => {
         const mappedDataType = mapDataToUser(dataType);
         const defaultValue = mappedDataType || dropdownValues[index];
         return (
-            <select key={index} value={defaultValue} onChange={(event) => handleDropdownChange(index, event)}>
+            <select key={index} defaultValue={defaultValue} value={dropdownValues[index]} onChange={(event) => handleDropdownChange(index, event)}>
             {yourDropdownOptions.map((option, optionIndex) => (
                 <option key={optionIndex} value={option}>
                 {option}
